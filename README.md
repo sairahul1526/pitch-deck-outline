@@ -64,6 +64,7 @@ the OCR benchmark and data-rights manifest are approved.
 
 - `src/pitchdeck/` — provider-neutral application modules.
 - `src/pitchdeck/ocr/` — OCR extraction contracts, metrics, and benchmark runner.
+- `src/pitchdeck/ingest/` — source rights and private artifact intake contracts.
 - `configs/` — checked-in, human-readable configuration templates.
 - `data/` — local data lifecycle directories; raw/private artifacts are ignored
   by Git.
@@ -85,3 +86,6 @@ The following decisions are intentionally not guessed in the scaffold:
 5. Retention and opt-in policy for public user briefs.
 
 See `docs/DECISIONS.md` for the decision log.
+
+The current next step is the private intake manifest described in
+`docs/DATA_INTAKE.md`. No source documents are downloaded by the repository yet.

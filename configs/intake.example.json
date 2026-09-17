@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "source_manifest_sha256": "REPLACE_WITH_SOURCE_MANIFEST_SHA256",
+  "records": [
+    {
+      "document_id": "example-deck-001",
+      "source_id": "approved-source-id",
+      "source_locator": "https://example.com/deck.pdf",
+      "relative_path": "data/raw/example-deck-001.pdf",
+      "sampling_bucket": "born_digital",
+      "status": "candidate",
+      "artifact_type": "pdf",
+      "sha256": null,
+      "byte_size": null,
+      "page_count": null,
+      "notes": "Replace this example only in a private working manifest."
+    }
+  ],
+  "metadata": {
+    "created_by": "replace-me",
+    "notes": "Private working file; do not commit permission evidence or PDFs."
+  }
+}
