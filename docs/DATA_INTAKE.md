@@ -32,6 +32,21 @@ The first sample target is 20 born-digital pages, 15 scanned/image-heavy pages,
 10 chart/table pages, and 5 difficult pages. Keep all pages from one company
 in the same evaluation split to prevent leakage.
 
+## Reproducible source snapshot
+
+The checked-in `scripts/download_awesome_decks.py` downloader resumes existing
+PDFs, follows Google Drive virus-scan confirmation links, verifies PDF magic
+bytes, and records per-file hashes in an ignored download manifest:
+
+```bash
+PYTHONPATH=src python scripts/download_awesome_decks.py --workers 4
+```
+
+The current local snapshot has 754 index rows, 752 unique Drive IDs, and 751
+downloaded PDFs; one Hadean link is stale and returns a verified Drive “file
+does not exist” page. The three Hugging Face source snapshots are also stored
+under `data/raw/huggingface/` with their revision and file hashes.
+
 ## Validation command
 
 ```bash
