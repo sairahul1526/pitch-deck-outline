@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "source_id": "awesome-pitch-decks",
+      "name": "Awesome Pitch Decks index",
+      "source_kind": "github_index",
+      "source_url": "https://github.com/midovislam/awesome-pitch-decks",
+      "owner": "midovislam / respective deck owners",
+      "license": "permission-pending",
+      "permission_reference": "REPLACE_WITH_PRIVATE_EVIDENCE_ID",
+      "rights_reviewed_at": "2026-09-17",
+      "status": "pending",
+      "allowed_for_training": false,
+      "allowed_for_public_model": false,
+      "allowed_for_public_redistribution": false,
+      "permission_scopes": [],
+      "expected_revision": "RECORD_GIT_COMMIT_AFTER_APPROVAL",
+      "notes": "The repository is an index; each linked deck may have separate rights."
+    },
+    {
+      "source_id": "pitch-deckz",
+      "name": "Pitch Deckz dataset",
+      "source_kind": "huggingface_dataset",
+      "source_url": "https://huggingface.co/datasets/skyforclouds/pitch-deckz",
+      "owner": "skyforclouds / respective deck owners",
+      "license": "permission-pending",
+      "permission_reference": "REPLACE_WITH_PRIVATE_EVIDENCE_ID",
+      "rights_reviewed_at": "2026-09-17",
+      "status": "pending",
+      "allowed_for_training": false,
+      "allowed_for_public_model": false,
+      "allowed_for_public_redistribution": false,
+      "permission_scopes": [],
+      "expected_revision": "RECORD_DATASET_COMMIT_AFTER_APPROVAL",
+      "notes": "Dataset metadata and underlying PDF rights must both be recorded."
+    },
+    {
+      "source_id": "yc-startup-pitches-with-scores",
+      "name": "YC startup pitches with scores",
+      "source_kind": "transcript_dataset",
+      "source_url": "https://huggingface.co/datasets/jasonhwan/yc-startup-pitches-with-scores",
+      "owner": "jasonhwan / original transcript owners",
+      "license": "permission-pending",
+      "permission_reference": "REPLACE_WITH_PRIVATE_EVIDENCE_ID",
+      "rights_reviewed_at": "2026-09-17",
+      "status": "pending",
+      "allowed_for_training": false,
+      "allowed_for_public_model": false,
+      "allowed_for_public_redistribution": false,
+      "permission_scopes": [],
+      "expected_revision": "RECORD_DATASET_COMMIT_AFTER_APPROVAL",
+      "notes": "Scores and rationales require provenance alongside transcripts."
+    },
+    {
+      "source_id": "synthetic-startup-pitches",
+      "name": "Synthetic startup pitch examples",
+      "source_kind": "synthetic_dataset",
+      "source_url": "https://huggingface.co/datasets/DAWA09/synthetic-startup-pitches",
+      "owner": "dataset publisher / generation model owners",
+      "license": "permission-pending",
+      "permission_reference": "REPLACE_WITH_PRIVATE_EVIDENCE_ID",
+      "rights_reviewed_at": "2026-09-17",
+      "status": "pending",
+      "allowed_for_training": false,
+      "allowed_for_public_model": false,
+      "allowed_for_public_redistribution": false,
+      "permission_scopes": [],
+      "expected_revision": "RECORD_DATASET_COMMIT_AFTER_APPROVAL",
+      "notes": "Use only as reviewed augmentation; do not treat generated facts as truth."
+    }
+  ]
+}
