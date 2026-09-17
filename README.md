@@ -63,6 +63,7 @@ the OCR benchmark and data-rights manifest are approved.
 ## Repository map
 
 - `src/pitchdeck/` — provider-neutral application modules.
+- `src/pitchdeck/ocr/` — OCR extraction contracts, metrics, and benchmark runner.
 - `configs/` — checked-in, human-readable configuration templates.
 - `data/` — local data lifecycle directories; raw/private artifacts are ignored
   by Git.

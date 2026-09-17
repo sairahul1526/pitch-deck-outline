@@ -1,0 +1,35 @@
+# OCR benchmark configuration. Engine adapters are added only after the
+# provider/license and hardware checks are complete.
+
+[benchmark]
+sample_size = 50
+language = "en"
+evidence_scope = "real_benchmark"
+gold_review_required = true
+preserve_page_locators = true
+
+[quality_thresholds]
+# Provisional launch gates; calibrate against the manually reviewed sample.
+max_character_error_rate = 0.05
+max_numeric_error_rate = 0.0
+min_token_f1 = 0.90
+
+[[engines]]
+name = "native-pdf-text"
+status = "planned"
+license = "system-tooling"
+
+[[engines]]
+name = "docling"
+status = "planned"
+license = "MIT-code-model-license-separate"
+
+[[engines]]
+name = "paddleocr-vl"
+status = "planned"
+license = "Apache-2.0"
+
+[[engines]]
+name = "olmocr"
+status = "planned"
+license = "Apache-2.0"
