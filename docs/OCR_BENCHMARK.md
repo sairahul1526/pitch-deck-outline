@@ -42,6 +42,17 @@ source PDFs or gold transcriptions unless their permission scope permits it.
 The report must retain case-level scores, engine versions, input/output hashes,
 evidence scope, and the benchmark manifest hash.
 
+## Private gold-review package
+
+The Colab notebook can build a deterministic review package without publishing
+source PDFs or annotations. It scans valid PDFs for page-level text signals,
+selects 20 born-digital candidates, 15 scanned candidates, 10 chart/table
+candidates, and 5 difficult candidates, then writes hashed case IDs and blank
+gold fields to the user's private Drive. The buckets are routing hints only;
+the reviewer must inspect each page, correct the bucket, transcribe the exact
+English text, and mark the record as reviewed. The generated JSON and JSONL
+files are working artifacts and must remain outside Git.
+
 ## Selection rule
 
 Choose the engine or tier with the best measured quality subject to acceptable
