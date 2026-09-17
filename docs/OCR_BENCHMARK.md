@@ -53,6 +53,18 @@ the reviewer must inspect each page, correct the bucket, transcribe the exact
 English text, and mark the record as reviewed. The generated JSON and JSONL
 files are working artifacts and must remain outside Git.
 
+## Machine-assisted draft pass
+
+After creating the review package, the notebook can run Docling once per
+selected page with an exact \`page_range\`. It writes
+\`gold-review-records-with-machine-drafts.jsonl\` and
+\`runs/ocr/machine-draft-report.json\` to Drive. Each row records the engine
+version, latency, status, and draft text while preserving blank gold fields.
+Rows are marked \`machine_draft_unverified\`; a human must inspect the source
+page, correct the transcription, confirm the provisional bucket, and then set
+the row to \`reviewed\`. Empty or failed machine drafts are retained as explicit
+hard cases rather than silently dropped.
+
 ## Selection rule
 
 Choose the engine or tier with the best measured quality subject to acceptable
