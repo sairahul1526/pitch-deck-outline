@@ -1,0 +1,16 @@
+# Project-level defaults. Provider/model credentials never belong here.
+
+[project]
+language = "en"
+output_mode = "plain_text"
+required_input = "brief"
+allow_unknown_optional_fields = true
+
+[safety]
+require_source_for_numeric_claims = true
+quarantine_detected_secrets = true
+preserve_raw_sources = true
+
+[limits]
+max_brief_characters = 50000
+max_output_tokens = 3000

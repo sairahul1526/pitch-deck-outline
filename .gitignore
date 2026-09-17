@@ -1,0 +1,36 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Source documents and generated artifacts. Keep only approved, redacted
+# fixtures in Git; manifests contain hashes and metadata rather than payloads.
+data/raw/*
+data/interim/*
+data/processed/*
+data/quarantine/*
+data/evaluation/*
+runs/*
+*.pdf
+*.parquet
+*.arrow
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.log
+
+# Allow directory placeholders to be tracked.
+!.gitkeep
