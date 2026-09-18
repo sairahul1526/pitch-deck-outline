@@ -89,5 +89,8 @@ The following decisions are intentionally not guessed in the scaffold:
 See `docs/DECISIONS.md` for the decision log.
 
 The current next step is the private benchmark review described in
-`docs/DATA_INTAKE.md`. Source documents may be downloaded into ignored local
-directories, but are never committed to this repository.
+`docs/DATA_INTAKE.md` and `docs/OCR_BENCHMARK.md`. The repository includes
+metadata-only validators and an exporter for turning completed private review
+rows into benchmark cases. Source documents, machine drafts, and gold
+transcriptions may be stored in ignored or private locations, but are never
+committed to this repository.

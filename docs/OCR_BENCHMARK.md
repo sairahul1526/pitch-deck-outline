@@ -65,6 +65,34 @@ page, correct the transcription, confirm the provisional bucket, and then set
 the row to \`reviewed\`. Empty or failed machine drafts are retained as explicit
 hard cases rather than silently dropped.
 
+## Review validation and export
+
+The private JSONL package can be checked without printing any transcription:
+
+```bash
+PYTHONPATH=src python scripts/validate_gold_review.py \
+  --records /private/path/gold-review-records-with-machine-drafts.jsonl \
+  --manifest /private/path/gold-review-manifest.json
+```
+
+For a row to become \`reviewed\`, the reviewer must provide non-empty
+\`gold_text\`, \`reviewer_id\`, and \`reviewed_at\` fields. The four structural
+annotation fields remain lists of exact strings. Until then, \`gold_text\` must
+stay blank even when a machine draft is available.
+
+After all rows pass review, export only the reviewed cases to another private
+location:
+
+```bash
+PYTHONPATH=src python scripts/export_reviewed_cases.py \
+  --records /private/path/gold-review-records-with-machine-drafts.jsonl \
+  --manifest /private/path/gold-review-manifest.json \
+  --output /private/path/benchmark-cases.jsonl
+```
+
+The exporter writes the provider-neutral `BenchmarkCase` JSONL shape and prints
+counts and hashes only. It never copies PDFs or private annotations into Git.
+
 ## Selection rule
 
 Choose the engine or tier with the best measured quality subject to acceptable
