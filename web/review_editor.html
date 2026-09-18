@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Private pitch-deck OCR reviewer</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, sans-serif; }
+    body { max-width: 1400px; margin: 0 auto; padding: 1rem; color: #202124; background: #f8f9fa; }
+    header, .panel { background: #fff; border: 1px solid #dadce0; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
+    h1 { margin: 0 0 .35rem; font-size: 1.55rem; }
+    h2 { margin-top: 0; font-size: 1.05rem; }
+    .warning { color: #7a3e00; background: #fff4e5; border: 1px solid #f3c892; border-radius: 7px; padding: .7rem; }
+    .muted { color: #5f6368; }
+    .toolbar { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+    button { border: 1px solid #5f6368; border-radius: 6px; background: #fff; padding: .55rem .8rem; cursor: pointer; font: inherit; }
+    button.primary { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .status { margin-left: auto; font-size: .9rem; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(340px, .85fr); gap: 1rem; }
+    .source img { width: 100%; max-height: 75vh; object-fit: contain; background: #eee; border: 1px solid #dadce0; }
+    .source .missing { padding: 2rem; background: #f1f3f4; }
+    pre { white-space: pre-wrap; max-height: 20rem; overflow: auto; padding: .75rem; border-radius: 6px; background: #f1f3f4; border: 1px solid #dadce0; }
+    label { display: block; margin-top: .75rem; font-weight: 600; }
+    input, select, textarea { box-sizing: border-box; width: 100%; margin-top: .25rem; border: 1px solid #9aa0a6; border-radius: 5px; padding: .5rem; font: inherit; background: #fff; }
+    textarea { min-height: 6rem; resize: vertical; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .meta { font-size: .88rem; line-height: 1.5; }
+    .save-message { min-height: 1.3rem; margin-top: .5rem; }
+    .ok { color: #137333; } .error { color: #b31412; }
+    @media (max-width: 900px) { .layout, .two-col { grid-template-columns: 1fr; } .status { margin-left: 0; width: 100%; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Private pitch-deck OCR reviewer</h1>
+    <p class="muted">Review one source page at a time. This page is intended for local use only.</p>
+    <p class="warning"><strong>Human-review rule:</strong> the machine draft is unverified. Never copy it into a gold field without checking the source image. Saving a pending row keeps gold text blank.</p>
+    <div class="toolbar">
+      <button id="previous" type="button">Previous</button>
+      <button id="next" type="button">Next</button>
+      <button id="save" class="primary" type="button">Save this review</button>
+      <span id="position" class="status">Loading…</span>
+    </div>
+    <div id="summary" class="muted"></div>
+  </header>
+
+  <main id="app" hidden>
+    <div class="layout">
+      <section class="panel source">
+        <h2>Source page</h2>
+        <div id="source-container"></div>
+        <div class="meta"><strong>Case:</strong> <code id="case-id"></code><br>
+          <strong>Document:</strong> <span id="document-name"></span><br>
+          <strong>Page:</strong> <span id="page-number"></span> · <strong>Bucket:</strong> <span id="source-bucket"></span></div>
+      </section>
+      <section class="panel">
+        <h2>Machine draft (unverified)</h2>
+        <pre id="machine-draft"></pre>
+        <p class="muted">The draft above is evidence to compare, not a label. Gold fields below must reflect what you can read in the source page.</p>
+
+        <div class="two-col">
+          <div><label for="review-status">Review status</label>
+            <select id="review-status">
+              <option value="machine_draft_unverified">Machine draft unverified</option>
+              <option value="needs_review">Needs review</option>
+              <option value="reviewed">Reviewed</option>
+              <option value="rejected">Rejected</option>
+            </select></div>
+          <div><label for="bucket">Provisional bucket</label>
+            <select id="bucket"><option value="born_digital">Born-digital</option><option value="scanned">Scanned</option><option value="chart_table">Chart/table</option><option value="difficult">Difficult</option></select></div>
+        </div>
+        <label for="reviewer-id">Reviewer ID</label>
+        <input id="reviewer-id" autocomplete="off" placeholder="Your chosen reviewer name or ID">
+        <label for="reviewed-at">Reviewed at</label>
+        <input id="reviewed-at" type="datetime-local">
+        <label for="gold-text">Gold text</label>
+        <textarea id="gold-text" placeholder="Transcribe the visible English text after checking the image"></textarea>
+        <div class="two-col">
+          <div><label for="gold-headings">Headings (one per line)</label><textarea id="gold-headings"></textarea></div>
+          <div><label for="gold-bullets">Bullets (one per line)</label><textarea id="gold-bullets"></textarea></div>
+          <div><label for="gold-numbers">Numbers/stats (one per line)</label><textarea id="gold-numbers"></textarea></div>
+          <div><label for="gold-tables">Tables/rows (one per line)</label><textarea id="gold-tables"></textarea></div>
+        </div>
+        <div id="save-message" class="save-message" role="status"></div>
+      </section>
+    </div>
+  </main>
+  <p id="fatal" class="error"></p>
+
+  <script>
+    const state = { records: [], index: 0 };
+    const editable = ["provisional_bucket", "review_status", "gold_text", "gold_numbers", "gold_headings", "gold_bullets", "gold_tables", "reviewer_id", "reviewed_at"];
+    const listFields = ["gold_numbers", "gold_headings", "gold_bullets", "gold_tables"];
+    const fieldIds = { "gold_numbers": "gold-numbers", "gold_headings": "gold-headings", "gold_bullets": "gold-bullets", "gold_tables": "gold-tables" };
+    const $ = (id) => document.getElementById(id);
+    const lines = (value) => value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
+    const setMessage = (text, ok = false) => { $("save-message").textContent = text; $("save-message").className = ok ? "save-message ok" : "save-message error"; };
+
+    function fill(record) {
+      $("app").hidden = false;
+      $("position").textContent = `Case ${state.index + 1} of ${state.records.length}`;
+      $("case-id").textContent = record.case_id;
+      $("document-name").textContent = record.source_file || record.relative_path;
+      $("page-number").textContent = record.page_number;
+      $("source-bucket").textContent = record.provisional_bucket;
+      $("machine-draft").textContent = record.machine_draft_text || "[empty machine draft]";
+      const source = $("source-container");
+      source.replaceChildren();
+      if (record.rendered_image) {
+        const image = document.createElement("img");
+        image.src = record.rendered_image;
+        image.alt = "Source page for visual review";
+        source.appendChild(image);
+      } else {
+        const missing = document.createElement("div");
+        missing.className = "missing";
+        missing.textContent = "Rendered source page is missing.";
+        source.appendChild(missing);
+      }
+      $("review-status").value = record.review_status || "machine_draft_unverified";
+      $("bucket").value = record.provisional_bucket;
+      $("reviewer-id").value = record.reviewer_id || "";
+      $("reviewed-at").value = (record.reviewed_at || "").replace(/Z$/, "");
+      $("gold-text").value = record.gold_text || "";
+      for (const field of listFields) $(fieldIds[field]).value = (record[field] || []).join("\n");
+      setMessage("");
+      $("previous").disabled = state.index === 0;
+      $("next").disabled = state.index === state.records.length - 1;
+    }
+
+    function collect() {
+      const changes = { "provisional_bucket": $("bucket").value, "review_status": $("review-status").value, "gold_text": $("gold-text").value };
+      for (const field of listFields) changes[field] = lines($(fieldIds[field]).value);
+      changes.reviewer_id = $("reviewer-id").value;
+      changes.reviewed_at = $("reviewed-at").value;
+      return changes;
+    }
+
+    async function load() {
+      try {
+        const response = await fetch("/api/records", { cache: "no-store" });
+        if (!response.ok) throw new Error(`Could not load records (${response.status})`);
+        state.records = (await response.json()).records;
+        if (!state.records.length) throw new Error("The private review queue is empty.");
+        fill(state.records[state.index]);
+        const reviewed = state.records.filter((item) => item.review_status === "reviewed").length;
+        const pending = state.records.length - reviewed;
+        $("summary").textContent = `${reviewed} reviewed · ${pending} still needing human attention · gold text is never auto-filled`;
+      } catch (error) { $("fatal").textContent = error.message; }
+    }
+
+    async function save() {
+      setMessage("Saving…");
+      try {
+        const response = await fetch(`/api/records/${state.index}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(collect()) });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || `Save failed (${response.status})`);
+        await load();
+        setMessage("Saved locally. The source and machine draft remain unchanged.", true);
+      } catch (error) { setMessage(error.message); }
+    }
+
+    $("previous").addEventListener("click", () => { if (state.index > 0) { state.index -= 1; fill(state.records[state.index]); } });
+    $("next").addEventListener("click", () => { if (state.index < state.records.length - 1) { state.index += 1; fill(state.records[state.index]); } });
+    $("save").addEventListener("click", save);
+    load();
+  </script>
+</body>
+</html>

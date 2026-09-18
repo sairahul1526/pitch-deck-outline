@@ -20,20 +20,23 @@ paths; it does not print source text.
 
 ## Review locally
 
-Serve the generated directory without publishing it:
+Run the local editor without publishing the generated directory:
 
 ```bash
-python3 -m http.server 8000 \
-  --bind 127.0.0.1 \
-  --directory data/interim/gold-review
+PYTHONPATH=src python3 scripts/review_server.py \
+  --root data/interim/gold-review \
+  --host 127.0.0.1 \
+  --port 8000
 ```
 
-Open `http://127.0.0.1:8000/review_queue.html`. Expand a case, compare the
-rendered source page with the unverified machine draft, and then edit the local
-`gold-review-records-with-machine-drafts.jsonl` copy. Keep `gold_text`, the
-annotation lists, `reviewer_id`, and `reviewed_at` blank until a human has
-actually checked the page. Change `review_status` to `reviewed` only after that
-review. Never commit the generated directory or copy its text into GitHub.
+Open `http://127.0.0.1:8000/review_editor.html`. The editor shows one source
+page and its unverified machine draft at a time. Enter only what you can verify
+from the image. Saving a pending row keeps `gold_text` blank; the server refuses
+to mark a row `reviewed` unless gold text, reviewer ID, and review time are all
+present. The generated directory is ignored by Git and stays private on the
+machine. Never commit it or copy its text into GitHub.
+
+The older `review_queue.html` remains available as a read-only visual index.
 
 The queue is a visual aid, not an editor. Use the repository's validation and
 export scripts after review:
